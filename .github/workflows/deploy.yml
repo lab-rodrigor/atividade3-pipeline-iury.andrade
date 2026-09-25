@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  SLUG: iury-andrade
+  SLUG: gr-iury-andrade
   PORTA: 23120
 
 jobs:
