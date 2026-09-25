@@ -22,19 +22,29 @@ jobs:
           chmod 600 ~/.ssh/deploy
           ssh-keyscan -H gr.lab.ayty.org >> ~/.ssh/known_hosts
 
-      - name: Derrubar a topologia antiga
+      - name: Remover front antigo
         continue-on-error: true
-        run: |
-          ssh -i ~/.ssh/deploy ${{ env.SLUG }}@gr.lab.ayty.org gr-docker rm front
-          ssh -i ~/.ssh/deploy ${{ env.SLUG }}@gr.lab.ayty.org gr-docker rm api
-          ssh -i ~/.ssh/deploy ${{ env.SLUG }}@gr.lab.ayty.org gr-docker rm banco
+        run: ssh -i ~/.ssh/deploy ${{ env.SLUG }}@gr.lab.ayty.org gr-docker rm front
 
-      - name: Criar rede e volume
+      - name: Remover api antiga
         continue-on-error: true
-        run: |
-          ssh -i ~/.ssh/deploy ${{ env.SLUG }}@gr.lab.ayty.org gr-docker volume create pgdata
-          ssh -i ~/.ssh/deploy ${{ env.SLUG }}@gr.lab.ayty.org gr-docker network create dados --interna
-          ssh -i ~/.ssh/deploy ${{ env.SLUG }}@gr.lab.ayty.org gr-docker network create web
+        run: ssh -i ~/.ssh/deploy ${{ env.SLUG }}@gr.lab.ayty.org gr-docker rm api
+
+      - name: Remover banco antigo
+        continue-on-error: true
+        run: ssh -i ~/.ssh/deploy ${{ env.SLUG }}@gr.lab.ayty.org gr-docker rm banco
+
+      - name: Criar rede dados
+        continue-on-error: true
+        run: ssh -i ~/.ssh/deploy ${{ env.SLUG }}@gr.lab.ayty.org gr-docker network create dados --interna
+
+      - name: Criar rede web
+        continue-on-error: true
+        run: ssh -i ~/.ssh/deploy ${{ env.SLUG }}@gr.lab.ayty.org gr-docker network create web
+
+      - name: Criar volume pgdata
+        continue-on-error: true
+        run: ssh -i ~/.ssh/deploy ${{ env.SLUG }}@gr.lab.ayty.org gr-docker volume create pgdata
 
       - name: Subir banco, API e front
         run: |
